@@ -1,45 +1,51 @@
 #include <bits/stdc++.h>
 using namespace std;
+typedef long long ll;
 typedef pair<int,int> pii;
+typedef pair<ll,ll> pll;
+#define pb push_back
+#define mp make_pair
+#define ff first
+#define ss second
+#define MOD 1000
+#define N 100010
+#define M 3010
 
-int n,m,t,k,ans_cnt;
-pii a[110],ans;
+int n,m,k,c,ans;
+pii a[105],dap;
 
-set<pii> myset;
-
-void chk(int x,int y)
+struct cmp
 {
-    int cnt=0;
-    for(pii i:myset) if(x<=i.first&&i.first<=x+k&&y<=i.second&&i.second<=y+k) cnt++;
-    if(ans_cnt<cnt) ans_cnt=cnt,ans={(k+x+y)/2,(x-y+1)/2};
-}
+    bool operator()(const pii lhs,const pii rhs) const
+    {
+        if(lhs.ss==rhs.ss) return lhs.ff<rhs.ff;
+        return lhs.ss<rhs.ss;
+    }
+};
+
+set<pii,cmp,allocator<pii> > s;
 
 int main(){
-    scanf("%d %d %d %d",&n,&m,&t,&k);
-    for(int i=0;i<t;i++)
-    {
-        int x,y;
-        scanf("%d %d",&x,&y);
-        a[i].first=x+y; a[i].second=x-y;
-    }
-
-    sort(a,a+t,[](pii lhs,pii rhs){return lhs.second==rhs.second?lhs.first<rhs.first:lhs.second<rhs.second;});
-    int x,y;
-    for(int i=0;i<t;i++)
-    {
-        x=a[i].first,y=a[i].second;
-        myset.clear();
-        for(int j=i;j<t&&a[j].second<=y+k;j++) myset.insert(a[j]);
-        if(myset.size()<=ans_cnt) continue;
-        for(pii j:myset)
+    //freopen("input.txt","r",stdin);
+//    int tc; cin>>tc;
+    cin>>n>>m>>k>>c;
+    for(int i=k;i--;) cin>>a[i].ff>>a[i].ss;
+    for(int i=k;i--;) a[i]={a[i].ff-a[i].ss,a[i].ff+a[i].ss};
+    for(int i=k;i--;)
+        for(int u=a[i].ff;u>a[i].ff-2;u--)
         {
-            x=j.first;
-            if(!(x<=a[i].first&&x+k>=a[i].first&&x+k<=2000000)) continue;
-            chk(x,y);
+            s.clear();
+            int cnt=0;
+            for(int j=k;j--;)
+                if(u<=a[j].ff&&a[j].ff<=u+c) s.insert(a[j]),cnt++;
+            int r=abs(u%2);
+            for(auto lf=s.begin(),rg=s.begin();rg!=s.end();++lf)
+            {
+                while(rg!=s.end()&&rg->ss<=lf->ss+c-(r!=abs(lf->ss%2))) ++rg;
+                int t=distance(lf,rg);
+                if(ans<t) ans=t,dap={u,lf->ss};
+            }
         }
-    }
-
-    printf("%d %d\n%d",ans.first,ans.second,ans_cnt);
-
+    cout<<max(0,min((dap.ff+dap.ss+c)/2,n))<<' '<<min(max((dap.ss-dap.ff)/2,0),m)<<'\n'<<ans;
     return 0;
 }

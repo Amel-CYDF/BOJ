@@ -1,57 +1,41 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
-#define MOD 1001
-#define SOURCE 0
-#define SINK 2020
+typedef pair<int,int> pii;
+typedef pair<ll,ll> pll;
+#define pb push_back
+#define mp make_pair
+#define ff first
+#define ss second
+#define MOD 1000
+#define N 100010
+#define M 3010
 
-int n,m,a[1<<11][1<<11],now[1<<11][1<<11],ans,lev[1<<11];
-list<int> ed[1<<11];
+int n,m,b[1010],ans,vis[2020];
+list<int> ed[1010];
 
-int dfs(int p,int maxflow)
+bool dfs(int p)
 {
-    if(p==SINK) return maxflow;
-    for(int i:ed[p])
-        if(lev[i]==lev[p]+1&&now[p][i]<a[p][i])
-        {
-            int ret=min(maxflow,dfs(i,min(maxflow,a[p][i]-now[p][i])));
-            if(ret>0)
-            {
-                now[p][i]+=ret; now[i][p]-=ret;
-                return ret;
-            }
-        }
+    if(vis[p]) return 0;
+    vis[p]=1;
+    for(auto i:ed[p>>1])
+        if(!~b[i]||dfs(b[i])) {b[i]=p; return 1;}
     return 0;
 }
 
 int main(){
-   // freopen("input.txt","r",stdin);
-    scanf("%d %d",&n,&m);
-    for(int i=1,s;i<=n;i++)
+    freopen("input.txt","r",stdin);
+//    int tc; cin>>tc;
+    cin>>n>>m;
+    for(int i=0,j;~scanf("%d",&j);i++)
+        for(int k=j,u;k--;) scanf("%d",&u),ed[i].pb(u);
+    n<<=1;
+    memset(b,-1,sizeof(b));
+    for(int i=n;i--;)
     {
-        scanf("%d",&s);
-        for(int j=0,t;j<s;j++)
-            scanf("%d",&t),t+=1<<10,
-            a[i][t]=1, ed[i].push_back(t),ed[t].push_back(i);
+        memset(vis,0,sizeof(vis));
+        ans+=dfs(i);
     }
-    for(int i=1;i<=n;i++) a[SOURCE][i]=2,ed[SOURCE].push_back(i);
-    for(int i=(1<<10)+1;i<=(1<<10)+m;i++) a[i][SINK]=1,ed[i].push_back(SINK);
-    while(1)
-    {
-        memset(lev,0,sizeof(lev));
-        queue<int> flow;
-        flow.push(SOURCE); lev[SOURCE]=1;
-        while(!flow.empty())
-        {
-            int p=flow.front(); flow.pop();
-            if(lev[SINK]) break;
-            for(int i:ed[p])
-                if(!lev[i]&&now[p][i]<a[p][i])
-                    lev[i]=lev[p]+1,flow.push(i);
-        }
-        if(!lev[SINK]) break;
-        for(int tmp;tmp=dfs(SOURCE,INT_MAX);ans+=tmp) ;
-    }
-    printf("%d",ans);
+    cout<<ans;
     return 0;
 }

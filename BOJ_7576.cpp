@@ -32,18 +32,16 @@ int main(){
             }
         }
     while(bfs());
-    int flag=0;
     for(int i=1;i<=n;i++)
         for(int j=1;j<=m;j++)
         {
             if(!a[i][j])
             {
                 printf("-1");
-                flag=1;
-                break;
+                return 0;
             }
             ans=max(ans,a[i][j]);
         }
-    if(!flag) printf("%d",ans-1);
+    printf("%d",ans-1);
     return 0;
 }
