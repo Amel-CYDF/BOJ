@@ -62,7 +62,7 @@ void Solve()
 void Init(bool isLocal){ if(isLocal) freopen("input.txt","r",stdin);
 	ios::sync_with_stdio(false); cin.tie(NULL);
 }
-int main(){ Init(01);
+int main(){ Init(0);
 //	int tc; cin>>tc; for(int i=1;i<=tc;i++)
 //	cout<<"Case #"<<i<<'\n',
 	Solve();
